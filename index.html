@@ -9,7 +9,12 @@
       font-family: sans-serif;
       margin: 0;
       padding: 0;
-      background: #abcfff;
+      background: linear-gradient(to bottom,#f2f2f2,#abcfff);
+      background-repeat: no-repeat;
+      background-attachment: fixed; 
+      /*让背景固定不随滚动变化*/
+      height: 100vh; 
+      /* 确保背景填满整个视窗 */
     }
     .container {
       max-width: 900px;
@@ -42,13 +47,25 @@
     .link-entry:hover {
       background: #e6f7ff;
     }
+    #secretButton {
+      display: none;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>工具/教程网站搜索</h1>
+    <h1 style="user-select: none; cursor: pointer;" onclick="handleClick()" id="title">工具/教程网站搜索</h1>
     <input type="text" id="searchBar" placeholder="输入关键词搜索，如“PS”、“配色”..." oninput="searchLinks()">
     <div id="results"></div>
+    <button id="secretButton" onclick="window.location.href='https://waterside2333.github.io/website.park/sb'">被你发现惹(///)</button>
   </div>
   <script>
     const links = [
@@ -351,7 +368,18 @@
 
     // 初始显示随机推荐
     window.onload = searchLinks;
+
+   // 隐藏按钮触发逻辑
+    let clickCount = 0;
+    const title = document.getElementById("title");
+    const secretButton = document.getElementById("secretButton");
+
+    title.addEventListener("click", () => {
+      clickCount++;
+      if (clickCount === 10) {
+        secretButton.style.display = "block";
+      }
+    });
   </script>
 </body>
 </html>
-
