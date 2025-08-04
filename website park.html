@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Park</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #abcfff;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #searchBar {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+    .link-entry {
+      background: white;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .link-entry a {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: bold;
+    }
+    .link-entry:hover {
+      background: #e6f7ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>工具/教程网站搜索</h1>
+    <input type="text" id="searchBar" placeholder="输入关键词搜索，如“PS”、“配色”..." oninput="searchLinks()">
+    <div id="results"></div>
+  </div>
+  <script>
+    const links = [
+      { name: "另一个像素画教学", url: "https://m.weibo.cn/status/4616434636817904" },
+      { name: "速写参考、人体动态（合集）", url: "https://user.qzone.qq.com/17741817/mood/f9b70e0121158460cc900a00" },
+      { name: "在线一起画画（有压感、多端支持）", url: "https://aggie.io" },
+      { name: "自动上色网站", url: "https://petalica-paint.pixiv.dev/index_zh.html" },
+      { name: "中国色~配色参考", url: "https://zhongguose.com" },
+      { name: "橙光（renpy）", url: "https://renpy.org" },
+      { name: "在线PS(没用过)", url: "https://ps.gaoding.com" },
+      { name: "PS素材(有笔刷)", url: "https://brushes8.com" },
+      { name: "L2D官网", url: "https://live2d.com" },
+      { name: "听歌识曲", url: "https://musipedia.org" },
+      { name: "Z-library", url: "https://zh.zlibrary.org/" },
+      { name: "鸠摩搜书", url: "https://jiumodiary.com" },
+      { name: "流程图在线画", url: "https://www.iodraw.com" },
+      { name: "在线memes生成器", url: "https://imgflip.com/memetemplates" },
+      { name: "世界电台", url: "http://www.radio.garden/" },
+      { name: "古典音乐资源：Musopen", url: "https://musopen.org" },
+      { name: "有声书Lit2Go", url: "https://etc.usf.edu/lit2go/" },
+      { name: "后妈式utau教程", url: "utaujc.jimdofree.com" },
+      { name: "觉得大家都知道但还是列在这的绘画设计素材网站", url: "huaban.com" },
+      { name: "像素画教学 推荐！", url: "https://www.doujin.com.tw/authors/info/yinshi?fbclid=IwAR0s-jQb712VNhE76Ti275q6_4lKBc9IREg1SgYCYNO_2NOosERTJNo_L0Y" },
+      { name: "另一个像素画教学", url: "https://m.weibo.cn/status/4616434636817904?wm=3333_2001&from=10B4093010&sourcetype=qq" },
+      { name: "速写参考、人体动态（合集）", url: "https://user.qzone.qq.com/17741817/mood/f9b70e0121158460cc900a00" },
+      { name: "在线一起画画（有压感、多端支持）", url: "https://aggie.io" },
+      { name: "只可以图一乐的线稿自动上色网站", url: "petalica-paint.pixiv.dev/index_zh.html" },
+      { name: "中国色~配色参考", url: "zhongguose.com" },
+      { name: "橙光", url: "renpy.org" },
+      { name: "在线PS(没用过)", url: "ps.gaoding.com" },
+      { name: "PS素材(有笔刷)", url: "brushes8.com" },
+      { name: "L2D官网", url: "live2d.com" },
+      { name: "听歌识曲", url: "musipedia.org" },
+      { name: "修音：小reatune  大melodyne", url: "" },
+      { name: "小小的音乐制作软件介绍，非官方", url: "jianshu.com/p/0020bfb5c6e0" },
+      { name: "AE素材（大概是）", url: "newcger.com" },
+      { name: "大家都知道的音频应用", url: "audiobar.cn" },
+      { name: "sai2官网吧", url: "www.systemax.jp/ja/sai/devdept.html" },
+      { name: "梗查找", url: "https://jikipedia.com/" },
+      { name: "汉语权威字典、词典", url: "https://www.zdic.net/" },
+      { name: "web基础教程", url: "https://www.runoob.com/" },
+      { name: "搜图网站", url: "http://iqdb.org/" },
+      { name: "JOSN工具：编码/加密/格式化/网络/前端/后端等等", url: "bejson.com" },
+      { name: "unicode编码转换工具", url: "tool.chinaz.com/Tools/Unicode.aspx" },
+      { name: "Unicode Text Converter_把纯文本变成来自unicode的晦涩字符", url: "http://qaz.wtf/u/convert.cgi" },
+      { name: "base64加密解密在线", url: "base64.supfree.net" },
+      { name: "震撼我妈的数学编辑器", url: "mathcha.io" },
+      { name: "人尽皆知的站长工具", url: "m.chinaz.com" },
+      { name: "在线制作ico图标", url: "tool.lu/favicon" },
+      { name: "歌词字幕在线转换", url: "lrccon.com/convert.php" },
+      { name: "帮助配色", url: "https://encycolorpedia.cn" },
+      { name: "配色_输入单个颜色，自动生成多个色彩组合", url: "https://mycolor.space/" },
+      { name: "在线流程图（若免费则一次性", url: "https://app.liuchengtu.com/" },
+      { name: "别用上面那个用这个来画流程图吧！无需注册免费可保存，永远滴神", url: "www.iodraw.com" },
+      { name: "上面网址的英文版（？", url: "draw.io" },
+      { name: "同是在线流程！需要注册，可以自动保存", url: "https://www.processon.com/" },
+      { name: "鸠摩搜书", url: "jiumodiary.com" },
+      { name: "Z-library", url: "https://z-lib.org/" },
+      { name: "↑zlib域名换来换去麻烦死了，这个地址会自动跳转到能正常访问的新地址", url: "https://1lib.domains" },
+      { name: "又一个z-lib镜像站，其中也有sci-hub和AO3的镜像链接", url: "https://zlib.life" },
+      { name: "图片背景消除·抠图", url: "www.remove.bg/zh" },
+      { name: "艺术二维码生成器", url: "tool.mkblog.cn/qrbtf/" },
+      { name: "各种各样的磁带盘面", url: "tapedeck.org" },
+      { name: "播放全世界森林声音的电台", url: "Tree.fm" },
+      { name: "可以听世界各地电台的网站", url: "http://www.radio.garden/" },
+      { name: "MusicNet：A curated collection of labeled classical music", url: "https://homes.cs.washington.edu/~thickstn/musicnet.html" },
+      { name: "濒临灭绝的动物拼图", url: "webhek.com/misc-res/species-in-pieces/#" },
+      { name: "网盘搜索引擎", url: "chaonengsou.com" },
+      { name: "可以找到便宜的乐手", url: "fiverr.com" },
+      { name: "（主要是）沙雕的在线工具都在这里！", url: "http://www.atoolbox.net" },
+      { name: "卢浮宫藏品线上观看", url: "https://collections.louvre.fr/en/recherche" },
+      { name: "中国哲学书电子化计划", url: "https://ctext.org/zhs" },
+      { name: "日语转假名 UTAU工具", url: "https://ameblo.jp/maiko3utau/entry-12660767498.html " },
+      { name: "创作支援网站", url: "https://www.world-type.com/" },
+      { name: "国学大师", url: "http://www.guoxuedashi.net/" },
+      { name: "古典文献资源导航", url: "https://www.waysto.work/wenxian/?continueFlag=7d5c710ee348107f69e25b71cffa16e1" },
+      { name: "在线做memes（模板）！", url: "https://imgflip.com/memetemplates" },
+      { name: "华为云学院基础课程", url: "https://edu.huaweicloud.com/courses" },
+      { name: "生成你的背单词计划表", url: "https://exam4.us/?continueFlag=d2e992a9a3cf46e7c53ffdab3795f659" },
+      { name: "盖茨夫妇建立的免费大学教科书数据库", url: "https://openstax.org/" },
+      { name: "简历模板", url: "https://www.polebrief.com/index?continueFlag=31a0cf2051684df4d95afdf068012848&dt_dapp=1" },
+      { name: "练听力的网站，素材丰富，内容可直接下载", url: "www.51voa.com" },
+      { name: "古典音乐资源宝库，无版权限制，免费试用", url: "https://musopen.org/" },
+      { name: "在线免注册免费下载ppt模板", url: "1ppt.com" },
+      { name: "经典的英文原版有声书站点：Lit2Go", url: "https://etc.usf.edu/lit2go/" },
+      { name: "英文少儿有声书网站", url: "www.storynory.com " },
+      { name: "Turn your photos into art with FotoSketcher – 100% freeware", url: "https://fotosketcher.com/" },
+      { name: "折本制作支援ツールorie", url: "https://orie.netlify.app/" },
+      { name: "英文写作校对（网站合集）", url: "https://m.weibo.cn/5198011111/4560366917126271" },
+      { name: "优秀的英语写作辅助系统", url: "http://www.esoda.org" },
+      { name: "中国亲戚关系计算器", url: "http://passer-by.com/relationship/ " },
+      { name: "地球数据网站", url: "https://search.asf.alaska.edu/" },
+      { name: "中国四大名著相关资源", url: "http://www.sdmzh.com.cn/" },
+      { name: "Manuscript Formatting Guidelines（生物）", url: "https://www.frontiersin.org/about/author-guidelines#ResolutionRequirements" },
+      { name: "尺子在线测量", url: "http://achizi.com/" },
+      { name: "Emoji", url: "https://emojixd.com/" },
+      { name: "全是emoji", url: "emojiall.com" },
+      { name: "实况摄像头，看世界各地景点", url: "skylinewebcams.com" },
+      { name: "纳尔逊-阿特金斯艺术博物馆馆藏资源开放获取", url: "https://nelson-atkins.org/" },
+      { name: "俄罗斯艾尔米塔什博物馆馆藏数字资源开放获取", url: "https://www.hermitagemuseum.org/wps/portal/hermitage/" },
+      { name: "山东大学特藏数字化平台", url: "http://tclib.sdu.edu.cn/" },
+      { name: "常用的音游下载站", url: "616.sb" },
+      { name: "论文中序号的使用顺序（教程）", url: "https://blog.csdn.net/microcosmv/article/details/51706678" },
+      { name: "利用Windows通知栏背单词的软件（有点娱乐向）", url: "https://lab.magiconch.com/toast-fish/" },
+      { name: "便捷查询某字体是否可商用", url: "https://fonts.safe.360.cn/" },
+      { name: "德国柏林国立图书馆数字资源", url: "https://digital.staatsbibliothek-berlin.de/" },
+      { name: "𝒔𝒑𝒆𝒄𝒊𝒂𝒍 𝒕𝒚𝒑𝒆𝒇𝒂𝒄𝒆 𝒄𝒐𝒏𝒗𝒆𝒓𝒕𝒆𝒓", url: "https://igfonts.io/" },
+      { name: "默克诊疗手册", url: "https://www.msdmanuals.cn" },
+      { name: "免费在线音乐博物馆，收录超十万种不同外形的乐器", url: "http://www.mimo-international.com/MIMO/" },
+      { name: "一个关于消失和濒危声音的在线博物馆（非免费素材", url: "www.conservethesound.de" },
+      { name: "点击就变图片生成器（缩略图跟点开后不同", url: "https://zcyzcy88.github.io/PolyPNG/" },
+      { name: "中国诗人资料馆：收藏古今中外数万名诗人的数十万首诗歌", url: "shiren.org" },
+      { name: "各种英语真题", url: "https://zhenti.burningvocabulary.com/" },
+      { name: "英语学习", url: "https://www.tjxz.cc/" },
+      { name: "一个英文小说网", url: "http://novel.tingroom.com/" },
+      { name: "如何避免土包子式日语发音——之vocaloid版（论坛教程）", url: "http://bbs.ivocaloid.com/thread-126499-1-1.html" },
+      { name: "免费学习口语的网站", url: "https://rachelsenglish.com" },
+      { name: "跟ai练习口语，包括英语和日语", url: "http://app.myshell.ai" },
+      { name: "作曲家作品目录（有汉语翻译、个人博客）", url: "http://blog.sina.com.cn/s/articlelist_1928821072_2_1.html" },
+      { name: "报刊在线阅读，需要flash环境", url: "http://paper.9stars.cn/" },
+      { name: "全面的EndNote使用方法中文教程", url: "https://www.howsci.com/endnote/" },
+      { name: "日本服饰史（日文网站", url: "https://www.iz2.or.jp/fukushoku/f_disp.php?page_no=0000112&" },
+      { name: "OSGeo中国中心", url: "https://www.osgeo.cn/map/?" },
+      { name: "TCGA数据库", url: "https://portal.gdc.cancer.gov/" },
+      { name: "GEO数据库", url: "https://www.ncbi.nlm.nih.gov/geo/" },
+      { name: "纪妖：中国妖怪集", url: "http://www.cbaigui.com/" },
+      { name: "影视作品兹原合集", url: "见批注" },
+      { name: "书本滋源合集", url: "见批注" },
+      { name: "Kindle漫画网站（也有epub资源）", url: "http://mox.moe/" },
+      { name: "万词王词典：根据意思找合适的词", url: "https://wantwords.thunlp.org/home" },
+      { name: "Minecraft原版模组入门教程", url: "https://zhangshenxing.gitee.io/vanillamodtutorial" },
+      { name: "在线文件批量重命名工具。不需登录，无使用限制", url: "https://webrename.cn/" },
+      { name: "image extractor，提取网页中的图片，不用按F12了（", url: "https://extract.pics/" },
+      { name: "切九图/四图工具", url: "https://lab.magiconch.com/v/sns-image" },
+      { name: "跨平台的markdown笔记网站/APP", url: "https://www.notion.so/zh-cn" },
+      { name: "吾爱诗词网：非资源", url: "https://www.52shici.com" },
+      { name: "blender资源合集", url: "见批注" },
+      { name: "没什么用但多少有点用的小工具", url: "https://free.icoa.cn/" },
+      { name: "在线格式工厂（不），超过500M要收费", url: "convertio.io" },
+      { name: "三个词云生成网站", url: "www.yciyun.com，www.moage.cn，wordart.com" },
+      { name: "日语语法指南", url: "http://res.wokanxing.info/jpgramma/index.html" },
+      { name: "日语写作校对", url: "http://www.kiji-check.com/" },
+      { name: "在线日语声调词典", url: "https://www.gavo.t.u-tokyo.ac.jp/ojad/chi/pages/home" },
+      { name: "适合日语初学者的NHK新闻（机读，带假名注音）", url: "https://www3.nhk.or.jp/news/easy/k10012375081000/k10012375081000.html" },
+      { name: "适合日语高阶学习者的NHK新闻", url: "https://www3.nhk.or.jp/news/" },
+      { name: "免费商用图库 Unsplash ", url: "unsplash.com" },
+      { name: "免费免版权可商用音乐网站", url: "freepd.com" },
+      { name: "山大文学院威龙老师整理的学术资源集合网站，十分强大：“效率集”", url: "www.xiaolvji.com" },
+      { name: "术语在线", url: "www.termonline.cn" },
+      { name: "日本免费肌肉猛男素材网站，有点生草", url: "https://freephotomuscle.com/" },
+      { name: "个人开发乱七八糟网站合集", url: "https://lab.magiconch.com/" },
+      { name: "全历史_不同国家的时间轴滑动查看该国家所有历史大事件", url: "https://www.allhistory.com/" },
+      { name: "英文缩略词查询神器", url: "https://www.abbreviationfinder.org/cn/" },
+      { name: "中医古籍全文数据库，可在线阅读", url: "http://zygj.cmstp.com/static/reader/index.html?continueFlag=e64a1751f9c80b7517884a073f9a05af" },
+      { name: "上海图书馆古籍选览", url: "http://wrd2016.library.sh.cn/channel/stgj/?continueFlag=4ba0870ed39e5ee6ec5f78da37030121" },
+      { name: "计划表生成网站", url: "https://yearcompass.com/cn/" },
+      { name: "2D 3D美术等免费课程", url: "https://www.uisdc.com/artstation-learning" },
+      { name: "做生物的可以参考的protocol库", url: "http://protocol.everlab.net/#" },
+      { name: "脑图谱网站", url: "https://portal.brain-map.org/" },
+      { name: "picoCAD_处理小模型的小工具", url: "https://johanpeitz.itch.io/picocad?continueFlag=03c5a6fbfe0440221157697cf67c0ed2m" },
+      { name: "学习excel的网站", url: "https://www.lanrenexcel.com/" },
+      { name: "微软数学求解器", url: "https://mathsolver.microsoft.com/zh" },
+      { name: "Gutenberg免费电子书_over 60,000 free eBooks", url: "https://gutenberg.org/" },
+      { name: "musipedia", url: "www.musipedia.org" },
+      { name: "b站视频下载工具1", url: "xbeibeix.com/api/bilibili" },
+      { name: "网盘搜索工具合集", url: "https://zhuanlan.zhihu.com/p/70228607" },
+      { name: "高清地图下载合集", url: "https://m.weibo.cn/status/4759572063980397?wm=3333_2001&from=10B7099020&sourcetype=qq" },
+      { name: "文献公开获取", url: "www.oalib.com" },
+      { name: "免费ai去水印", url: "watermarkremover.io" },
+      { name: "肖邦藏品开放获取", url: "https://chopin.musicsources.pl/en/" },
+      { name: "在线人声分离", url: "https://vocalremover.org/" },
+      { name: "免费、全英文课程网站", url: "https://thecrashcourse.com/" },
+      { name: "国家开放大学终身教育平台，免费，感觉上科普居多", url: "http://le.ouchn.cn/#/home" },
+      { name: "开源解剖图谱", url: "www.z-anatomy.com" },
+      { name: "国内首个免费在线科研绘图平台", url: "www.figdraw.com" },
+      { name: "基础功能免费的PDF处理工具", url: "https://www.ilovepdf.com/zh-cn" },
+      { name: "pdf工具，类似上文", url: "https://tools.pdf24.org/zh/" },
+      { name: "全国图书馆参考咨询联盟书籍互助查询，两元一本", url: "http://xueshu86.com" },
+      { name: "英语词典网站", url: "vocabulary.com" },
+      { name: "入门与进阶乐理教程", url: "https://soundquest.jp" },
+      { name: "该网站的汉语翻译版本", url: "https://music-theory.aizcutei.com" },
+      { name: "比的原理：在线测音高，在线频谱图，在线钢琴", url: "https://bideyuanli.com/pp" },
+      { name: "简单的图像调整器和降噪工具，增加图像大小", url: "https://waifu2x.io" },
+      { name: "ai人工智能图片无损放大", url: "https://bigjpg.com/zh" },
+      { name: "picdiet：在线免费压缩图片工具，无尺寸、数量、大小限制", url: "https://www.picdiet.com/zh-cn" },
+      { name: "输入单词，生成蜘蛛网，列出同义词", url: "http://www.thesaurus.com" },
+      { name: "潮汐表 - 实时查询全国港口潮汐情况", url: "http://chaoxb.com" },
+      { name: "中医古籍文献资源", url: "https://wenxian.sdutcm.edu.cn/info/1027/1139.htm" },
+      { name: "新世纪福音战士标题生成器", url: "https://lab.magiconch.com/eva-title/" },
+      { name: "学术树，可以分学科看到大牛们的师承关系", url: "https://academictree.org/" },
+      { name: "上文中子网站，神经方向学术树", url: "https://neurotree.org/neurotree/" },
+      { name: "学术·神经·小工具合集", url: "https://zhuanlan.zhihu.com/p/271735994" },
+      { name: "RPG maker MV帮助文档中文版", url: "http://miaowm5.github.io/RMMV-F1/" },
+      { name: "日语在线辞典网站", url: "http://weblio.jp" },
+      { name: "Database of everything on Steam", url: "https://steamdb.info" },
+      { name: "免费免抠图素材网站", url: "https://pngimg.com" },
+      { name: "提供一种将基本音效融入游戏的简单方法", url: "https://www.drpetter.se/project_sfxr.html" },
+      { name: "免费的实时语音转文字工具", url: "https://webcaptioner.com/captioner" },
+      { name: "pku前辈编计算机自学指南", url: "https://csdiy.wiki/" },
+      { name: "人工智能logo设计生成器", url: "https://www.logosc.cn/ " },
+      { name: "知识图谱。提供10000多本古籍，支持在线阅读和PDF下载", url: "https://cnkgraph.com/Book" },
+      { name: "免费，打开就能用的在线录屏工具（需要科学上网）", url: "https://screen-rec.vercel.app/" },
+      { name: "搜题网站：简搜题", url: "https://www.jiansouti.com" },
+      { name: "专栏-提升打字速度", url: "https://zhuanlan.zhihu.com/p/411848286" },
+      { name: "免费食品类像素素材包", url: "https://ghostpixxells.itch.io/" },
+      { name: "九州大学 Sketchfab 上公开的1400余个 水生生物、昆虫及植物的3D模型", url: "https://sketchfab.com/ffishAsia-and-floraZia" },
+      { name: "专业在图片内打光 ", url: "https://clipdrop.co/relight" },
+      { name: "一个免费开源学术资源网站，无需注册，千万级文献免费下载", url: " http://www.koovin.com/" },
+      { name: "法律检索类网站", url: "https://m.weibo.cn/status/4778105854230899?wm=3333_2001&from=10C7099020&sourcetype=qq" },
+      { name: "汉典，除汉语字词典外还有古籍 | 诗词 | 书法 | 通识等子网站", url: "https://www.zdic.net/" },
+      { name: "字节跳动与北京大学合作研发的古籍数字化平台“识典古籍”测试版上线，目前免费", url: "https://www.shidianguji.com/" },
+      { name: "助记口诀生成器 (试水版) ", url: "http://zj.youdongtai.com/" },
+      { name: "线上自习室，无需注册即可享受全部功能", url: "https://www.qlstudyroom.cn/select" },
+      { name: "非编码RNA数据中心", url: "http://www.noncode.org/ " },
+      { name: "综合性的分子生物学的软件", url: "https://www.snapgene.com/" },
+      { name: "设备(手机，半画幅相机，全画幅相机)摄像头性能，传感器数据比较", url: " www.dxomark.com/  " },
+      { name: "国际诗库", url: "http://shiku.org/shiku/ws/wg/index.htm " },
+      { name: "FLAC/QMC转mp3", url: "https://ncm.worthsee.com/ " },
+      { name: "visible learning：使用3D图集研究、学习和教授生命科学", url: "https://www.visiblebody.com/zh/ " },
+      { name: "生成词云", url: "https://www.yciyun.com/ " },
+      { name: "色盲模拟器，可把图片转化为色盲眼中的样子", url: "https://www.color-blindness.com/coblis-color-blindness-simulator/" },
+      { name: "轻量软件，直观看到文件在磁盘中占比 ", url: "https://www.fosshub.com/SpaceSniffer.html" },
+      { name: "reverse image search", url: "https://www.reverseimagesearch.com/ " },
+      { name: "中国历代纹样 需注册 。微博/微信/b站：纹藏·中国纹样可见官方", url: "http://www.wenzang.art/ " },
+      { name: "安娜的档案", url: "https://zh.annas-archive.org/ " },
+      { name: "日系教案PPT里常见的免费插图素材（一个商用项目里最多用二十个 ", url: "https://www.irasutoya.com/   " },
+      { name: "大学生活质量指北", url: "https://cn.colleges.chat" },
+      { name: "圣经工具，可按关键词搜索", url: "https://abibletool.com/book/index.htm " },
+      { name: "漫自由，轻松看漫画，但需要下载后看", url: "https://mhx12.com" },
+      { name: "OSGeo中国中心", url: "https://www.osgeo.cn/" },
+      { name: "软件：Copy++", url: "https://github.com/CopyPlusPlus/CopyPlusPlus " },
+      { name: "激活windows", url: "https://github.com/massgravel/Microsoft-Activation-Scripts/releases" },
+      { name: "激活office365", url: "https://www.cnblogs.com/jetqiu/p/11716397.html" },
+      { name: "记灵-在线工具合集", url: "https://remeins.com/" },
+      { name: "高铁助手", url: "https://www.lazyplan.com/" },
+      { name: "麦当劳热量计算器", url: "https://www.mcdonalds.com.cn/nutrition_calculator" },
+      { name: "修改gif图的速度", url: "https://gifspeed.imageonline.co/index-cn.php" },
+      { name: "同上，他是有一整套的工具的", url: "https://imageonline.co/tools-cn.php" },
+      { name: "可以查英语词源的网站：查询单词背后的词根、故事", url: "https://www.etymonline.com/" },
+      { name: "微信公众号文章视频下载", url: "https://www.15um.com/tools/weixin_v.php" },
+      { name: "做基础3d打印模型非常好用，免费仅需注册", url: "https://www.tinkercad.com" },
+      { name: "软件，大概功能是ai做脚本，还没试用", url: "https://www.yingdao.com/" },
+      { name: "将日文标上罗马拼音网站，无需注册", url: "https://www.jcinfo.net/zh-hans/tools/ja-roman" },
+      { name: "领先的 Web 技术教程 - 全部免费", url: "http://www.w3school.com.cn/" },
+      { name: "追踪鲸鱼，寻找它们的轨迹！", url: "https://happywhale.com/home" },
+      { name: "在线心率监测器（这不就节拍器吗）", url: "https://onlineheartrate.com/zh" },
+      { name: "to find an art online", url: "https://www.wikiart.org/" },
+      { name: "图片转字符画工具", url: "https://image2text.yunser.com/" },
+      { name: "神经递质", url: "http://www.neuropeptides.nl/tabel%20neuropeptides%20linked.htm" },
+      { name: "圣地巡礼网站", url: "https://anitabi.cn/map" },
+      { name: "帮你解析一条shell语句到底是什么意思", url: "https://www.explainshell.com/" },
+      { name: "java游戏仓库与论坛，收录超10000款java游戏", url: "http://java.52emu.cn/" },
+      { name: "how https work", url: "https://howhttps.work/" },
+      { name: "找墓", url: "https://www.findagrave.com/" },
+      { name: "常见格式文档转化工具，转latex比较好用", url: "https://github.com/jgm/pandoc" },
+      { name: "collect the websites for any topic，做着和我们差不多的事情的网站", url: "https://curlie.org/" },
+      { name: "背单词", url: "https://wordforest.cn" },
+      { name: "2024年终大放送 之 TOP60开源项目榜", url: "https://weibo.com/ttarticle/p/show?id=2309405116459549589615" },
+      { name: "2024年终大放送 之 TOP60分享榜", url: "https://weibo.com/ttarticle/p/show?id=2309405116846293516430" },
+      { name: "在线提词器小工具，让你的屏幕变成提词板", url: "http://t.yinshiriji.com/word.html?continueFlag=eea77d0e37a1273c975faad3da3cbcc2" },
+      { name: "医学语音文字矫正，用于医学相关文本的自动校正与格式化处理", url: "http://t.yinshiriji.com/" },
+      { name: "中国科学院植物科学数据中心", url: "https://www.plantplus.cn/cn" },
+      { name: "可为图片加入艺术故障特效的网站，可免费试用其中一些功能，动态静态均有", url: "https://moshpro.app/" },
+      { name: "技术术语网站 especially for computer tech", url: "https://techterms.com/" },
+      { name: "分享9个世界油画欣赏和研究网站", url: "（详细介绍见批注）" },
+      { name: "工作空间规划器：测量站着和坐着使用电脑最适合的高度", url: "https://www.ergotron.com/zh-cn/%E5%B7%A5%E5%85%B7/%E5%B7%A5%E4%BD%9C%E7%A9%BA%E9%97%B4%E8%A7%84%E5%88%92%E5%99%A8" },
+      { name: "胖鸟网，资源网站", url: "https://pangniao.cc/" },
+      { name: "免抠图无水印png素材网站", url: "https://pngimg.com" },
+      { name: "Contrast Checker", url: "https://contrastchecker.com/" },
+      { name: "Color Review", url: "https://color.review/check/ABCFFF-FFFFFF" },
+      { name: "小型工具：从 600多个选择中发现您的完美小工具", url: "https://miniwebtool.com/zh-cn/" },
+      { name: "波长与颜色的关系：将以nm为单位的波长转换为RGB、十六进制或HSL颜色的简单工具", url: "https://academo.org/demos/wavelength-to-colour-relationship/" },
+      { name: "工具导航网站", url: "https://www.toolfk.com 中文版：https://www.toolfk.com/zh-cn/" },
+      { name: "各种乐器指法图，可互动（目前有十种乐器）", url: "https://tomplay.com/zh/fingering-charts" },
+      { name: "一起画画！在共享画布上与朋友一起绘画和素描，举办或参加同人艺术活动。免费", url: "https://magma.com/zh-cn/" },
+      { name: "CHAZ：有趣的东西数字化！目前有手机博物馆", url: "https://chaz.fun/" },
+      { name: "Neuromatch Academy 计算神经科学课程内容安装与配置指南", url: "https://blog.csdn.net/gitblog_01186/article/details/147109806" },
+      { name: "心理测试", url: "https://minke8.cn/" },
+
+    ];
+
+    function searchLinks() {
+      const query = document.getElementById("searchBar").value.toLowerCase();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      const filtered = links.filter(link =>
+        link.name.toLowerCase().includes(query)
+      );
+
+      const toShow = query ? filtered : [links[Math.floor(Math.random() * links.length)]];
+
+      toShow.forEach(link => {
+        const entry = document.createElement("div");
+        entry.className = "link-entry";
+        entry.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a>`;
+        resultsDiv.appendChild(entry);
+      });
+    }
+
+    // 初始显示随机推荐
+    window.onload = searchLinks;
+  </script>
+</body>
+</html>
