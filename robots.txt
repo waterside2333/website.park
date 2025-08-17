@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://waterside2333.github.io/website.park/sitemap.xml
